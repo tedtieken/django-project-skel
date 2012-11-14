@@ -204,18 +204,31 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD', None)
 
 
+# #AWS Keys and settings for Storages
+# AWS_ACCESS_KEY_ID = ""
+# AWS_SECRET_ACCESS_KEY = ""
+# AWS_STORAGE_BUCKET_NAME = '{{project_name}}-assets'
+# 
+# if not DJANGO_ENVIRONMENT_TYPE or DJANGO_ENVIRONMENT_TYPE in ["PROD", "TEST"]:
+#   DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#   STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#   STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
+#   #MEDIA_URL = 
+#   ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
 if not DJANGO_ENVIRONMENT_TYPE or DJANGO_ENVIRONMENT_TYPE == "PROD":
   try:
     from {{ project_name }}.settings_prod import *
   except ImportError:
     pass
-elif DJANGO_ENVIRONMENT_TYPE and DJANGO_ENVIRONMENT_TYPE == "DEV":
-  try:
-    from {{ project_name }}.settings_dev import *
-  except ImportError:
-    pass    
-elif DJANGO_ENVIRONMENT_TYPE and DJANGO_ENVIRONMENT_TYPE == "TEST":
+elif DJANGO_ENVIRONMENT_TYPE == "TEST":
   try:
     from {{ project_name }}.settings_test import *
   except ImportError:
-    pass  
+    pass
+elif DJANGO_ENVIRONMENT_TYPE == "DEV":
+  try:
+    from {{ project_name }}.settings_dev import *
+  except ImportError:
+    pass
+
