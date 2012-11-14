@@ -1,17 +1,32 @@
 # Global settings for {{ project_name }} project.
 import os
+import sys
 
-PROJECT_DIR = os.path.dirname(__file__)
-PUBLIC_DIR = os.path.join(PROJECT_DIR, 'public')
+PROJECT_PATH_INNER = os.path.dirname(__file__)
+PROJECT_PATH = os.path.dirname(PROJECT_PATH_INNER)
+APPLIB_DIR = os.path.join(PROJECT_PATH, "applib")
+
+if APPLIB_DIR not in sys.path[:2]:
+  sys.path.insert(1, APPLIB_DIR)
+
+IS_LOCAL = False
+DJANGO_ENVIRONMENT_TYPE = os.environ.get('DJANGO_ENVIRONMENT_TYPE', None)
+
 
 DEBUG = False
 TEMPLATE_DEBUG = True
+
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
+
+if not DJANGO_ENVIRONMENT_TYPE or DJANGO_ENVIRONMENT_TYPE == "PROD":
+  import dj_database_url  
+  DATABASES = {'default': dj_database_url.config(default='postgres://localhost/{{ project_name }}')}
+
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -41,7 +56,7 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(PUBLIC_DIR, 'media')
+MEDIA_ROOT = os.path.join(PROJECT_PATH, 'assets/media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -52,7 +67,7 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(PUBLIC_DIR, 'static')
+STATIC_ROOT = os.path.join(PROJECT_PATH, 'assets/static-destination')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -63,7 +78,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_DIR, 'static'),
+    os.path.join(PROJECT_PATH, 'assets/static'),
 )
 
 # List of finder classes that know how to find static files in
@@ -85,7 +100,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Uncomment the next line for simple clickjacking protection:
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',    
 )
 
 ROOT_URLCONF = '{{ project_name }}.urls'
@@ -97,7 +113,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_DIR, 'templates'),
+    os.path.join(PROJECT_PATH, 'templates'),
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -108,11 +124,20 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.static',
     'django.core.context_processors.request',
+    
+    '{{ project_name }}.misc.context_processors.date_formats',
+    '{{ project_name }}.misc.context_processors.is_local',
+    
+    #AllAuth
+    'allauth.account.context_processors.account',
+    'allauth.socialaccount.context_processors.socialaccount',    
 )
 
 FIXTURE_DIRS = (
-    os.path.join(PROJECT_DIR, 'fixtures'),
+    os.path.join(PROJECT_PATH, 'fixtures'),
 )
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -122,6 +147,24 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'django.contrib.admindocs',
+    
+    #system/pip installed apps
+    'south',
+    'gunicorn',
+    'storages',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    #'allauth.socialaccount.providers.facebook',
+    #'allauth.socialaccount.providers.twitter',        
+    
+    #No model apps
+    '{{ project_name }}.misc',      #gets views and urls, incl basic homepage
+    '{{ project_name }}.templates', #gets template tags
+    
+    #real apps
+    
 )
 
 # A sample logging configuration. The only tangible logging
@@ -153,10 +196,26 @@ LOGGING = {
     }
 }
 
-try:
-    LOCAL_SETTINGS
-except NameError:
-    try:
-        from local_settings import *
-    except ImportError:
-        pass
+#EMAIL
+EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME', None)
+EMAIL_HOST= 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD', None)
+
+
+if not DJANGO_ENVIRONMENT_TYPE or DJANGO_ENVIRONMENT_TYPE == "PROD":
+  try:
+    from {{ project_name }}.settings_prod import *
+  except ImportError:
+    pass
+elif DJANGO_ENVIRONMENT_TYPE and DJANGO_ENVIRONMENT_TYPE == "DEV":
+  try:
+    from {{ project_name }}.settings_dev import *
+  except ImportError:
+    pass    
+elif DJANGO_ENVIRONMENT_TYPE and DJANGO_ENVIRONMENT_TYPE == "TEST":
+  try:
+    from {{ project_name }}.settings_test import *
+  except ImportError:
+    pass  
