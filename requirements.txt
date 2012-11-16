@@ -6,6 +6,7 @@ gunicorn==0.14.6
 django-allauth==0.8.2
 dj-database-url==0.2.1
 django-storages==1.1.5
+django-s3-folder-storage==0.1
 psycopg2==2.4.5
 
 #Enabling packages
