@@ -300,6 +300,8 @@ elif DJANGO_ENVIRONMENT_TYPE == "DEV":
   
   # QUEUES
   # TODO add celery/AMQP defaults
+  
+#TODO add newrelic/monitoring  https://newrelic.com/docs/python/django-on-heroku-quick-start
 
   # LOCAL SETTINGS
   # Keep local settings in DEV environment to ensure that tests 
