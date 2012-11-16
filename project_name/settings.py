@@ -9,23 +9,13 @@ APPLIB_DIR = os.path.join(PROJECT_PATH, "applib")
 if APPLIB_DIR not in sys.path[:2]:
   sys.path.insert(1, APPLIB_DIR)
 
-IS_LOCAL = False
-DJANGO_ENVIRONMENT_TYPE = os.environ.get('DJANGO_ENVIRONMENT_TYPE', None)
-
-
-DEBUG = False
-TEMPLATE_DEBUG = True
-
-
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
 
-if not DJANGO_ENVIRONMENT_TYPE or DJANGO_ENVIRONMENT_TYPE == "PROD":
-  import dj_database_url  
-  DATABASES = {'default': dj_database_url.config(default='postgres://localhost/{{ project_name }}')}
+#DATABASE IN BOTTOM ENVIRONMENT CONFIG AREA
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -153,6 +143,7 @@ INSTALLED_APPS = (
     'south',
     'gunicorn',
     'storages',
+    's3_folder_storage',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -196,39 +187,121 @@ LOGGING = {
     }
 }
 
-#EMAIL
-EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME', None)
-EMAIL_HOST= 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD', None)
+
+IS_LOCAL = False
+
+# NO ENVIRONMENT FALLBACK
+# Better to fail informatively than failover in a way that makes debugging impossible
+
+assert 'DJANGO_ENVIRONMENT_TYPE' in os.environ, 'Set DJANGO_ENVIRONMENT_TYPE environment variable!'
+DJANGO_ENVIRONMENT_TYPE = os.environ['DJANGO_ENVIRONMENT_TYPE']
+
+if DJANGO_ENVIRONMENT_TYPE not in ["PROD", "TEST", "DEV"]:
+  raise AssertionError("DJANGO_ENVIRONMENT_TYPE not in configured values 'PROD', 'TEST', 'DEV'")
+
+####################################### 
+#PRODUCTION ENVIRONMENT
+####################################### 
+if DJANGO_ENVIRONMENT_TYPE == "PROD":
+  #BEHAVIOR FLAGS
+  DEBUG = False
+  TEMPLATE_DEBUG = True  
+  IS_LOCAL = False
+
+  #DATABASE
+  import dj_database_url  
+  DATABASES = {'default': dj_database_url.config(default='postgres://localhost/{{ project_name }}')}  
+  
+  #EMAIL
+  EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
+  EMAIL_HOST= 'smtp.sendgrid.net'
+  EMAIL_PORT = 587
+  EMAIL_USE_TLS = True
+  EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
+
+  #AWS KEYS
+  AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+  AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+  AWS_STORAGE_BUCKET_NAME = '{{project_name}}-assets-prod'
+
+  #STATIC FILES, MEDIA, ASSETS
+  DEFAULT_FILE_STORAGE = 's3_folder_storage.s3.DefaultStorage'
+  DEFAULT_S3_PATH = "media"
+  STATICFILES_STORAGE = 's3_folder_storage.s3.StaticStorage'
+  STATIC_S3_PATH = "static"
+
+  MEDIA_ROOT = '/%s/' % DEFAULT_S3_PATH
+  MEDIA_URL = 'http://%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
+  STATIC_ROOT = "/%s/" % STATIC_S3_PATH
+  STATIC_URL = 'http://%s.s3.amazonaws.com/static/' % AWS_STORAGE_BUCKET_NAME
+  ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+  
+  #CACHES
+  
+  #QUEUES
 
 
-# #AWS Keys and settings for Storages
-# AWS_ACCESS_KEY_ID = ""
-# AWS_SECRET_ACCESS_KEY = ""
-# AWS_STORAGE_BUCKET_NAME = '{{project_name}}-assets'
-# 
-# if not DJANGO_ENVIRONMENT_TYPE or DJANGO_ENVIRONMENT_TYPE in ["PROD", "TEST"]:
-#   DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-#   STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-#   STATIC_URL = 'http://' + AWS_STORAGE_BUCKET_NAME + '.s3.amazonaws.com/'
-#   #MEDIA_URL = 
-#   ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
-
-if not DJANGO_ENVIRONMENT_TYPE or DJANGO_ENVIRONMENT_TYPE == "PROD":
-  try:
-    from {{ project_name }}.settings_prod import *
-  except ImportError:
-    pass
+ 
+####################################### 
+# TESTING ENVIRONMENT  
+#######################################
 elif DJANGO_ENVIRONMENT_TYPE == "TEST":
-  try:
-    from {{ project_name }}.settings_test import *
-  except ImportError:
-    pass
+  # Not set up by default
+  # should be exact settings as production with different servers/databases
+  raise NotImplementedError("TEST environment settings have not been set up")
+  
+  
+  
+#######################################   
+# DEV / LOCAL ENVIRONMENT  
+####################################### 
 elif DJANGO_ENVIRONMENT_TYPE == "DEV":
+  #Behavior Flags
+  DEBUG = True
+  TEMPLATE_DEBUG = True
+  #IS_LOCAL is a legacy flag
+  #in the future should be changed to something like "IS_DEV" or "SERVE_ALL_LOCALLY"
+  IS_LOCAL = True  
+  
+  #DATABASE
+  import dj_database_url
+  DATABASES = {'default': dj_database_url.config(default='postgres://localhost/{{project_name}}')}
+  # Alt database settings
+  # DATABASES = {
+  #   'default': {
+  #     'ENGINE': 'django.db.backends.sqlite3',
+  #     'NAME': '{{ project_name }}.db',
+  #     'USER': '',
+  #     'PASSWORD': '',
+  #     'HOST': '',
+  #     'PORT': '',
+  #   }
+  # }
+    
+  #EMAIL
+  EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+  #STATIC FILES, MEDIA, ASSETS
+  MEDIA_URL = '/media/'
+  STATIC_URL = '/static/'  
+
+  #CACHES
+  CACHES = {
+    'default': {
+      'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+      #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+      'LOCATION': '127.0.0.1:11211',
+    }
+  }    
+
+  # LOCAL SETTINGS
+  # Keep local settings in DEV environment to ensure that tests 
+  # and temporary tweaks to settings don't create version control nightmare
   try:
-    from {{ project_name }}.settings_dev import *
-  except ImportError:
-    pass
+      LOCAL_SETTINGS
+  except NameError:
+      try:
+          from local_settings import *
+      except ImportError:
+          pass
 
