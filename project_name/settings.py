@@ -237,8 +237,11 @@ if DJANGO_ENVIRONMENT_TYPE == "PROD":
   ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
   
   #CACHES
+  # TODO add memcached/redis defaults
+
   
   #QUEUES
+  # TODO add celery/AMQP defaults
 
 
  
@@ -286,6 +289,7 @@ elif DJANGO_ENVIRONMENT_TYPE == "DEV":
   STATIC_URL = '/static/'  
 
   #CACHES
+  # Todo add memcached/redis defaults
   CACHES = {
     'default': {
       'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -293,6 +297,9 @@ elif DJANGO_ENVIRONMENT_TYPE == "DEV":
       'LOCATION': '127.0.0.1:11211',
     }
   }    
+  
+  # QUEUES
+  # TODO add celery/AMQP defaults
 
   # LOCAL SETTINGS
   # Keep local settings in DEV environment to ensure that tests 
