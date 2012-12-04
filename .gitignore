@@ -13,7 +13,14 @@
 .settings
 atlassian-ide-plugin.xml
 
+# Packaging files:
+*.egg*
+
+# SQLite3 database files:
+*.db
+
 # Project
 /{{ project_name }}/local_settings.py
 /assets/static-destination
 /assets/media
+

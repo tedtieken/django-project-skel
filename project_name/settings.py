@@ -199,7 +199,7 @@ assert 'DJANGO_ENV' in os.environ, 'Set DJANGO_ENV environment variable!'
 DJANGO_ENV = os.environ['DJANGO_ENV']
 
 if DJANGO_ENV not in ["PRODUCTION", "TEST", "DEV"]:
-  raise EnvironmentError("DJANGO_ENV not in configured values 'PRODUCTION', 'TEST', 'DEV'")
+  raise EnvironmentError("DJANGO_ENV set to '%s'.  Configured environments are 'PRODUCTION', 'TEST', 'DEV'" % DJANGO_ENV)
 
 ####################################### 
 #PRODUCTION ENVIRONMENT
