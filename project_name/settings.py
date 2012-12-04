@@ -123,6 +123,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'allauth.socialaccount.context_processors.socialaccount',    
 )
 
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
 FIXTURE_DIRS = (
     os.path.join(PROJECT_PATH, 'fixtures'),
 )
@@ -151,6 +159,7 @@ INSTALLED_APPS = (
     #'allauth.socialaccount.providers.twitter',
     
     #applib installed 3rd party apps
+    
     
     #Project apps - utility
     '{{ project_name }}.misc',      #gets views and urls, incl basic homepage
@@ -267,7 +276,7 @@ elif DJANGO_ENV == "TEST":
 elif DJANGO_ENV == "DEV":
   #BEHAVIOR FLAGS
   # To make it easier to turn DEBUG on and off
-  DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
+  DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
   TEMPLATE_DEBUG = DEBUG
   IS_LOCAL = True  
   
