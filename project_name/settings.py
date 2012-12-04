@@ -139,7 +139,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     
-    #system/pip installed apps
+    #system/pip installed 3rd party apps
     'south',
     'gunicorn',
     'storages',
@@ -148,13 +148,15 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
     #'allauth.socialaccount.providers.facebook',
-    #'allauth.socialaccount.providers.twitter',        
+    #'allauth.socialaccount.providers.twitter',
     
-    #No model apps
+    #applib installed 3rd party apps
+    
+    #Project apps - utility
     '{{ project_name }}.misc',      #gets views and urls, incl basic homepage
     '{{ project_name }}.templates', #gets template tags
     
-    #real apps
+    #Project apps - core
     
 )
 
@@ -187,25 +189,28 @@ LOGGING = {
     }
 }
 
+#TODO update IS_LOCAL
+#make something like "SERVE_ALL_LOCALLY"
 
-IS_LOCAL = False
+# NO DJANGO_ENV FALLBACK
+# Environment variables are mostly not given fallbacks on purpose
+# Better to fail early and informatively than to initially appear to work and later fail obscurely
+assert 'DJANGO_ENV' in os.environ, 'Set DJANGO_ENV environment variable!'
+DJANGO_ENV = os.environ['DJANGO_ENV']
 
-# NO ENVIRONMENT FALLBACK
-# Better to fail informatively than failover in a way that makes debugging impossible
-
-assert 'DJANGO_ENVIRONMENT_TYPE' in os.environ, 'Set DJANGO_ENVIRONMENT_TYPE environment variable!'
-DJANGO_ENVIRONMENT_TYPE = os.environ['DJANGO_ENVIRONMENT_TYPE']
-
-if DJANGO_ENVIRONMENT_TYPE not in ["PROD", "TEST", "DEV"]:
-  raise AssertionError("DJANGO_ENVIRONMENT_TYPE not in configured values 'PROD', 'TEST', 'DEV'")
+if DJANGO_ENV not in ["PRODUCTION", "TEST", "DEV"]:
+  raise EnvironmentError("DJANGO_ENV not in configured values 'PRODUCTION', 'TEST', 'DEV'")
 
 ####################################### 
 #PRODUCTION ENVIRONMENT
 ####################################### 
-if DJANGO_ENVIRONMENT_TYPE == "PROD":
+if DJANGO_ENV == "PRODUCTION":
   #BEHAVIOR FLAGS
-  DEBUG = False
-  TEMPLATE_DEBUG = True  
+  # To make it easier to turn DEBUG on and off
+  # heroku config:add DJANGO_DEBUG=True
+  # heroku config:remove DJANGO_DEBUG
+  DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
+  TEMPLATE_DEBUG = DEBUG
   IS_LOCAL = False
 
   #DATABASE
@@ -213,57 +218,57 @@ if DJANGO_ENVIRONMENT_TYPE == "PROD":
   DATABASES = {'default': dj_database_url.config(default='postgres://localhost/{{ project_name }}')}  
   
   #EMAIL
-  EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
   EMAIL_HOST= 'smtp.sendgrid.net'
+  EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
+  EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
   EMAIL_PORT = 587
   EMAIL_USE_TLS = True
-  EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
 
   #AWS KEYS
   AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
   AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-  AWS_STORAGE_BUCKET_NAME = '{{project_name}}-assets-prod'
+  AWS_STORAGE_BUCKET_NAME = '{{project_name}}-assets-production'
 
-  #STATIC FILES, MEDIA, ASSETS
+  #ASSETS: STATIC FILES, MEDIA
   DEFAULT_FILE_STORAGE = 's3_folder_storage.s3.DefaultStorage'
-  DEFAULT_S3_PATH = "media"
   STATICFILES_STORAGE = 's3_folder_storage.s3.StaticStorage'
+  DEFAULT_S3_PATH = "media"
   STATIC_S3_PATH = "static"
 
   MEDIA_ROOT = '/%s/' % DEFAULT_S3_PATH
-  MEDIA_URL = 'http://%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
   STATIC_ROOT = "/%s/" % STATIC_S3_PATH
+  MEDIA_URL = 'http://%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
   STATIC_URL = 'http://%s.s3.amazonaws.com/static/' % AWS_STORAGE_BUCKET_NAME
   ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
   
   #CACHES
   # TODO add memcached/redis defaults
-
   
   #QUEUES
-  # TODO add celery/AMQP defaults
-
+  # TODO add celery defaults
+  
+  #MONITORING
+  # TODO add newrelic defaults
 
  
 ####################################### 
 # TESTING ENVIRONMENT  
 #######################################
-elif DJANGO_ENVIRONMENT_TYPE == "TEST":
+elif DJANGO_ENV == "TEST":
   # Not set up by default
   # should be exact settings as production with different servers/databases
   raise NotImplementedError("TEST environment settings have not been set up")
-  
+
   
   
 #######################################   
 # DEV / LOCAL ENVIRONMENT  
 ####################################### 
-elif DJANGO_ENVIRONMENT_TYPE == "DEV":
-  #Behavior Flags
-  DEBUG = True
-  TEMPLATE_DEBUG = True
-  #IS_LOCAL is a legacy flag
-  #in the future should be changed to something like "IS_DEV" or "SERVE_ALL_LOCALLY"
+elif DJANGO_ENV == "DEV":
+  #BEHAVIOR FLAGS
+  # To make it easier to turn DEBUG on and off
+  DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
+  TEMPLATE_DEBUG = DEBUG
   IS_LOCAL = True  
   
   #DATABASE
@@ -284,28 +289,40 @@ elif DJANGO_ENVIRONMENT_TYPE == "DEV":
   #EMAIL
   EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-  #STATIC FILES, MEDIA, ASSETS
+  #ASSETS: STATIC FILES, MEDIA
   MEDIA_URL = '/media/'
   STATIC_URL = '/static/'  
 
   #CACHES
   # Todo add memcached/redis defaults
-  CACHES = {
-    'default': {
-      'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-      #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-      'LOCATION': '127.0.0.1:11211',
-    }
-  }    
+  # CACHES = {
+  #   'default': {
+  #     'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+  #     #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+  #     'LOCATION': '127.0.0.1:11211',
+  #   }
+  # }    
   
-  # QUEUES
-  # TODO add celery/AMQP defaults
+  #QUEUES
+  # TODO add celery defaults
   
-#TODO add newrelic/monitoring  https://newrelic.com/docs/python/django-on-heroku-quick-start
+  #MONITORING
+  # TODO add newrelic/monitoring  https://newrelic.com/docs/python/django-on-heroku-quick-start
+  
+  
+  #ENVIRONMENT SPECIFIC 
+  INSTALLED_APPS += (
+    'debug_toolbar',
+  )
+
+  MIDDLEWARE_CLASSES += (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+  )
+  
+  
 
   # LOCAL SETTINGS
-  # Keep local settings in DEV environment to ensure that tests 
-  # and temporary tweaks to settings don't create version control nightmare
+  # Tolerate local settings in DEV environment 
   try:
       LOCAL_SETTINGS
   except NameError:
