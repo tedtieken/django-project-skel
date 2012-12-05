@@ -19,6 +19,9 @@ atlassian-ide-plugin.xml
 # SQLite3 database files:
 *.db
 
+# Foreman environment variables
+.env
+
 # Project
 /{{ project_name }}/local_settings.py
 /assets/static-destination
