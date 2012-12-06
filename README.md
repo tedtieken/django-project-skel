@@ -1,6 +1,7 @@
+# Django 1.4 project template for fast Heroku deployment
 # {{ project_name|title }} Django Project #
-# Django 1.4 Project template with Bootstrap for fast Heroku deployment
 
+With bootstrap!
 
 ## About
 
@@ -8,44 +9,45 @@ This is '''work in progress''' starting template for Django 1.4 projects.
 
 
 ## Skel Template Features ##
-####Logical default file tree
+#####Logical default file tree
 - Global assets, fixtures, applib directory.
 - Project template and misc directories by default
 - Collects static and media into assets/{static-destination,media} respectively.
 
-####Deployment best practices by default
+#####Deployment best practices by default
 - Encourages the use of virtualenv and virtualenvwrapper.
 - Encourages the use of pip and `requirements.txt`.
 - Encourages the use of git.
 - Includes a .gitignore for the usual junk.
 
-####Sane settings.py configurations by default
+#####Sane settings.py configurations by default
 * Timezone set to UTC.
 * Discourages storing credentials and secrets in the repository.
 * Encourages storing credentials and secrets in environment variables 
 * Uses env['DJANGO_ENV'] to configure settings for each environment ['PRODUCTION', 'TEST', 'DEV'] in a single settings.py file that gets stored in repo
 * Tolerates the use of `local_settings.py` file, by default only in DEV.
 
-####Encourages simple separation of apps by type: 
-* - Unmodified 3rd party apps installed to virtualenv site-packages 
-* - Modified 3rd party apps placed in applib/ directory, applib/ added to path
-* - Apps specific to project to be created in project_name/{app_name} directory
+#####Encourages simple separation of apps by type: 
+* Unmodified 3rd party apps installed to virtualenv site-packages 
+* Modified 3rd party apps placed in applib/ directory, applib/ added to path
+* Apps specific to project to be created in project_name/{app_name} directory
 
-* Ready for Heroku Deployment
-* - Includes Procfile, using gunicorn
-* - Includes storages, s3_folder_storage (allows separate directories for media and static)
-* - Setup to use sendgrid for email delivery
+#####Ready for Heroku Deployment
+* Includes Procfile, using gunicorn
+* Includes storages, s3_folder_storage (allows separate directories for media and static)
+* Setup to use sendgrid for email delivery
 
-* Common settings already active
-* - Django admin activated by default.
-* - allauth
-* - south
-* - django-storages for static/media on s3
-* - django-folder-storages to keep static/media in separate silos
-*
+#####Common apps already installed
+* With reasonable default configurations
+* Django admin activated by default.
+* allauth
+* south
+* django-storages for static/media on s3
+* django-folder-storages to keep static/media in separate silos
 
+####Other Goodies
 * Simple 404 and 500 error templates.
-* Instructions to download a bootstrap driven base.html
+* TODO: Instructions to download a bootstrap driven base.html
 * Automatically builds a README with installation notes.
 
 
@@ -64,16 +66,7 @@ This is '''work in progress''' starting template for Django 1.4 projects.
 - Heroku account, AWS account 
 - python2 >= 2.7, pip, virtualenv, git
 
-
-## Installation ##
-Highly specific instructions for my preferences
-
-
-
-# How to start a Django project in 2012
-## (and deploy to Heroku)
-
-First time system warm up.
+### First time system warm up.
 
 ``` bash
 $ easy_install pip
@@ -83,14 +76,20 @@ $ wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 $ heroku login
 ```
 
-# Starting a new project
+
+
+
+# Installation #
+Highly specific instructions for my preferences
+
+
+## Preparing for a new project
 
 Collect AWS Credentials
 
-1. Login to AWS
-2. Goto AWS Management Console > IAM > Users > Create new user > {{ project_name }}
-3. Record credentials
-4. Bottom Pane, Permissions Tab > Attach User Policy > S3 Full access
+1. AWS Management Console > IAM > Users > Create new user > {{ project_name }}
+2. Record credentials
+3. Bottom Pane, Permissions Tab > Attach User Policy > S3 Full access
 
 Create s3 bucket
 
@@ -98,22 +97,33 @@ Create s3 bucket
 2. Create Bucket {{ project_name }}-logging
 3. Create Bucket {{ project_name }}-assets-production, logging to ibid
 
+Gather domain credentials
+
+
+## Start the new project
+Create Virtualenv
 ``` bash
-## Create Virtualenv
 $ virtualenv --no-site-packages --distribute ~/ve/[project-name]
 $ source ~/ve/[project-name]/bin/activate
+``` 
 
-## Install Django
+Install Django
+``` bash
 $ pip install Django
+``` 
 
-## Start a project.
+Start a project.
+``` bash
 $ django-admin.py startproject --template https://github.com/tedtieken/django-project-skel/zipball/master --extension py,md,gitignore,dist [project-name]
 $ cd [project-name]
 $ touch virtenv_is_[project-name]
+```
 
-## Install base requirements.
+Install base requirements.
+``` bash
 $ pip install -r requirements.txt
 $ pip install -r requirements_dev.txt
+```
 
 ## (Opt) Check for newer versions
 $ pip freeze | cut -d = -f 1 | xargs -n 1 pip search | grep -B2 'LATEST:'
