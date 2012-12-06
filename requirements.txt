@@ -1,4 +1,4 @@
-#Requirements updated 12/3/2012
+#Latest versions as of 12/3/2012
 #Core packages
 distribute==0.6.27
 django==1.4.2
@@ -17,3 +17,4 @@ httplib2==0.7.6
 oauth2==1.5.211
 python-openid==2.2.5
 wsgiref==0.1.2
+mock==1.0.1 #For boto tests
