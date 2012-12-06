@@ -10,9 +10,9 @@ This is '''work in progress''' starting template for Django 1.4 projects.
 ## Skel Template Features ##
 
 * Logical default file tree
-- Global assets, fixtures, applib directory.
-- Project template and misc directories by default
-- Collects static and media into assets/{static-destination,media} respectively.
+  - Global assets, fixtures, applib directory.
+  - Project template and misc directories by default
+  - Collects static and media into assets/{static-destination,media} respectively.
 
 * Deployment best practices by default
 - Encourages the use of virtualenv and virtualenvwrapper.
@@ -123,9 +123,7 @@ $ pip install [package] --upgrade
 
 ## Create local .env file
 ## NB see environment variables below if you'd rather 
-``` bash
 $ cp sample.env .env
-```
 
 ## Validate
 $ foreman run python manage.py validate
@@ -478,8 +476,8 @@ Finally, fire up your server:
 $ ./manage.py runserver 0.0.0.0:8000
 ```
 
-# Things not done on purpose and why
-## Secret_key not put into environment variable
+## Things done on purpose and why
+### Secret_key not put into environment variable
 
 I think it is more work and more error prone to keep this as an env variable.  If this ever gets out of sync on a node the certs/cookies signed by that node will be incompatible with the rest of the system.   
 ``` python
@@ -490,7 +488,7 @@ SECRET_KEY = environ.get('SECRET_KEY')
 #Just not doing it -- Best
 ``` 
 
-## Using Honcho instead of Foreman
+## Foreman(ruby) instead of Honcho(python)
 As of 12/5/12 Honcho is ~Foreman written in python, less used, and a few features behind.  As it is a tool, and I haven't yet really had to dive into the guts, ruby seems fine to me for now.
 
 
