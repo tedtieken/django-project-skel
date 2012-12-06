@@ -15,8 +15,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-#DATABASE IN BOTTOM ENVIRONMENT CONFIG AREA
-
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = r"{{ secret_key }}"
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -137,17 +137,27 @@ FIXTURE_DIRS = (
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
 
+########## APP CONFIGURATION
 INSTALLED_APPS = (
+    ##### DJANGO_APPS #####
+    # Default Django apps
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Useful template tags:
+    'django.contrib.humanize',
+
+    # Admin panel and documentation:
     'django.contrib.admin',
     'django.contrib.admindocs',
+
     
-    #system/pip installed 3rd party apps
+    ##### THIRD_PARTY_APPS #####
+    # System/pip installed 3rd party apps
     'south',
     'gunicorn',
     'storages',
@@ -157,17 +167,26 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     #'allauth.socialaccount.providers.facebook',
     #'allauth.socialaccount.providers.twitter',
+
     
-    #applib installed 3rd party apps
+    ##### APPLIB_APPS #####
+    # 3rd party apps that have been modified and placed in /applib
+    # /applib is added to path
     
-    
-    #Project apps - utility
+    #'moded_third_party_app',
+
+
+    ##### PROJECT_APPS #####
+    # Project apps - utility
     '{{ project_name }}.misc',      #gets views and urls, incl basic homepage
     '{{ project_name }}.templates', #gets template tags
     
-    #Project apps - core
-    
-)
+    # Project apps - core
+    #'{{ project_name}}.myapp',
+
+)    
+########## END APP CONFIGURATION
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -198,17 +217,37 @@ LOGGING = {
     }
 }
 
-#TODO update IS_LOCAL
-#make something like "SERVE_ALL_LOCALLY"
+#AllAuth Settings
+# See: http://django-allauth.readthedocs.org/en/latest/
+ACCOUNT_AUTHENTICATION_METHOD = "username" 
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = True
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[{{ project_name }}]"
 
-# NO DJANGO_ENV FALLBACK
-# Environment variables are mostly not given fallbacks on purpose
-# Better to fail early and informatively than to initially appear to work and later fail obscurely
-assert 'DJANGO_ENV' in os.environ, 'Set DJANGO_ENV environment variable!'
-DJANGO_ENV = os.environ['DJANGO_ENV']
 
-if DJANGO_ENV not in ["PRODUCTION", "TEST", "DEV"]:
-  raise EnvironmentError("DJANGO_ENV set to '%s'.  Configured environments are 'PRODUCTION', 'TEST', 'DEV'" % DJANGO_ENV)
+
+#######################################
+#ENVIRONMENTS
+####################################### 
+# Manage environment specific settings with DJANGO_ENV 
+# variable and an if-else switch. Unlike separate 
+# settings files for each environment, this keeps all 
+# settings in one place. 
+#
+# Keep secrets and passwords safe by storing them in 
+# environment variables and outside of the repo. 
+#
+# Most environment variables are not given fallbacks
+# Better to fail early and informatively than to 
+# initially appear to work and later fail obscurely
+#
+# DJANGO_ENV retrieval failures made verbose and informative
+#######################################
+CONFIGURED_ENVIRONMENTS = "Default DJANGO_ENV choices: 'PRODUCTION', 'TEST', 'DEV'"
+assert 'DJANGO_ENV' in os.environ, 'Set DJANGO_ENV environment variable! %s' % CONFIGURED_ENVIRONMENTS
+DJANGO_ENV = os.environ.get('DJANGO_ENV', None)
+assert DJANGO_ENV in ["PRODUCTION", "TEST", "DEV"], "DJANGO_ENV set to '%s'.  %s" % (DJANGO_ENV, CONFIGURED_ENVIRONMENTS)
+
 
 ####################################### 
 #PRODUCTION ENVIRONMENT
@@ -216,12 +255,12 @@ if DJANGO_ENV not in ["PRODUCTION", "TEST", "DEV"]:
 if DJANGO_ENV == "PRODUCTION":
   #BEHAVIOR FLAGS
   # To make it easier to turn DEBUG on and off
-  # heroku config:add DJANGO_DEBUG=True
+  # heroku config:add DJANGO_DEBUG=true
   # heroku config:remove DJANGO_DEBUG
-  DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
+  DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
   TEMPLATE_DEBUG = DEBUG
   IS_LOCAL = False
-
+  
   #DATABASE
   import dj_database_url  
   DATABASES = {'default': dj_database_url.config(default='postgres://localhost/{{ project_name }}')}  
@@ -251,15 +290,23 @@ if DJANGO_ENV == "PRODUCTION":
   ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
   
   #CACHES
-  # TODO add memcached/redis defaults
-  
   #QUEUES
-  # TODO add celery defaults
-  
   #MONITORING
-  # TODO add newrelic defaults
 
- 
+  #ENVIRONMENT APP ADDITIONS
+  INSTALLED_APPS += (
+    
+  )
+
+  #ENVIRONMENT MIDDLEWARE ADDITIONS
+  MIDDLEWARE_CLASSES += (
+    
+  )
+  
+########## END PRODUCTION ENVIRONMENT SETTINGS
+
+
+
 ####################################### 
 # TESTING ENVIRONMENT  
 #######################################
@@ -267,22 +314,23 @@ elif DJANGO_ENV == "TEST":
   # Not set up by default
   # should be exact settings as production with different servers/databases
   raise NotImplementedError("TEST environment settings have not been set up")
+########## END TESTING ENVIRONMENT SETTINGS
 
-  
-  
+
+    
 #######################################   
-# DEV / LOCAL ENVIRONMENT  
+# DEV ENVIRONMENT SETTINGS
 ####################################### 
 elif DJANGO_ENV == "DEV":
   #BEHAVIOR FLAGS
   # To make it easier to turn DEBUG on and off
-  DEBUG = bool(os.environ.get('DJANGO_DEBUG', False))
+  DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
   TEMPLATE_DEBUG = DEBUG
   IS_LOCAL = True  
   
   #DATABASE
   import dj_database_url
-  DATABASES = {'default': dj_database_url.config(default='postgres://localhost/{{project_name}}')}
+  DATABASES = {'default': dj_database_url.config(default='postgres://user:pass@localhost/{{project_name}}')}
   # Alt database settings
   # DATABASES = {
   #   'default': {
@@ -303,27 +351,15 @@ elif DJANGO_ENV == "DEV":
   STATIC_URL = '/static/'  
 
   #CACHES
-  # Todo add memcached/redis defaults
-  # CACHES = {
-  #   'default': {
-  #     'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-  #     #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-  #     'LOCATION': '127.0.0.1:11211',
-  #   }
-  # }    
-  
   #QUEUES
-  # TODO add celery defaults
-  
   #MONITORING
-  # TODO add newrelic/monitoring  https://newrelic.com/docs/python/django-on-heroku-quick-start
-  
-  
-  #ENVIRONMENT SPECIFIC 
+    
+  #ENVIRONMENT APP ADDITIONS
   INSTALLED_APPS += (
     'debug_toolbar',
   )
 
+  #ENVIRONMENT MIDDLEWARE ADDITIONS
   MIDDLEWARE_CLASSES += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
   )
@@ -339,4 +375,6 @@ elif DJANGO_ENV == "DEV":
           from local_settings import *
       except ImportError:
           pass
+########## END DEV ENVIRONMENT SETTINGS
 
+          
