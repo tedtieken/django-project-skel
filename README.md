@@ -1,5 +1,5 @@
 # {{ project_name|title }} Django Project #
-# From Django 1.4 Project template with Bootstrap for fast Heroku deployment
+# Django 1.4 Project template with Bootstrap for fast Heroku deployment
 
 
 ## About
@@ -10,15 +10,15 @@ This is '''work in progress''' starting template for Django 1.4 projects.
 ## Skel Template Features ##
 
 * Logical default file tree
-* - Global assets, fixtures, applib directory.
-* - Project template and misc directories by default
-* - Collects static and media into assets/{static-destination,media} respectively.
+- Global assets, fixtures, applib directory.
+- Project template and misc directories by default
+- Collects static and media into assets/{static-destination,media} respectively.
 
 * Deployment best practices by default
-* - Encourages the use of virtualenv and virtualenvwrapper.
-* - Encourages the use of pip and `requirements.txt`.
-* - Encourages the use of git.
-* - Includes a .gitignore for the usual junk.
+- Encourages the use of virtualenv and virtualenvwrapper.
+- Encourages the use of pip and `requirements.txt`.
+- Encourages the use of git.
+- Includes a .gitignore for the usual junk.
 
 * Sane settings.py configurations by default
 * - Timezone set to UTC.
