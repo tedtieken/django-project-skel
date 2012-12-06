@@ -68,7 +68,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(PROJECT_PATH, 'assets/static'),
+    os.path.join(PROJECT_PATH, 'assets/assets'),
 )
 
 # List of finder classes that know how to find static files in
@@ -256,7 +256,7 @@ if DJANGO_ENV == "PRODUCTION":
   #BEHAVIOR FLAGS
   # To make it easier to turn DEBUG on and off
   # heroku config:add DJANGO_DEBUG=true
-  # heroku config:remove DJANGO_DEBUG
+  # heroku config:add DJANGO_DEBUG=false
   DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
   TEMPLATE_DEBUG = DEBUG
   IS_LOCAL = False
