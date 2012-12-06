@@ -8,27 +8,25 @@ This is '''work in progress''' starting template for Django 1.4 projects.
 
 
 ## Skel Template Features ##
+####Logical default file tree
+- Global assets, fixtures, applib directory.
+- Project template and misc directories by default
+- Collects static and media into assets/{static-destination,media} respectively.
 
-* Logical default file tree
-  - Global assets, fixtures, applib directory.
-  - Project template and misc directories by default
-  - Collects static and media into assets/{static-destination,media} respectively.
-
-* Deployment best practices by default
+####Deployment best practices by default
 - Encourages the use of virtualenv and virtualenvwrapper.
 - Encourages the use of pip and `requirements.txt`.
 - Encourages the use of git.
 - Includes a .gitignore for the usual junk.
 
-* Sane settings.py configurations by default
-* - Timezone set to UTC.
-* - Discourages storing credentials and secrets in the repository.
-* - Encourages storing credentials and secrets in environment variables 
-* - Uses env['DJANGO_ENV'] to configure settings for each environment ['PRODUCTION', 'TEST', 'DEV']
-*   in a single settings.py file that gets stored in repo
-* - Tolerates the use of `local_settings.py` file, by default only in DEV.
+####Sane settings.py configurations by default
+* Timezone set to UTC.
+* Discourages storing credentials and secrets in the repository.
+* Encourages storing credentials and secrets in environment variables 
+* Uses env['DJANGO_ENV'] to configure settings for each environment ['PRODUCTION', 'TEST', 'DEV'] in a single settings.py file that gets stored in repo
+* Tolerates the use of `local_settings.py` file, by default only in DEV.
 
-* Encourages simple separation of apps by type: 
+####Encourages simple separation of apps by type: 
 * - Unmodified 3rd party apps installed to virtualenv site-packages 
 * - Modified 3rd party apps placed in applib/ directory, applib/ added to path
 * - Apps specific to project to be created in project_name/{app_name} directory
