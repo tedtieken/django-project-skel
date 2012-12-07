@@ -5,6 +5,6 @@ def date_formats(request):
         'date_format_long': 'l j F Y',
     }
     
-def is_local(request):
-  return {'IS_LOCAL': settings.IS_LOCAL}
+def serve_media_locally(request):
+  return {'SERVE_MEDIA_LOCALLY': settings.SERVE_MEDIA_LOCALLY}
     

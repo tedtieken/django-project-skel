@@ -116,7 +116,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     
     '{{ project_name }}.misc.context_processors.date_formats',
-    '{{ project_name }}.misc.context_processors.is_local',
+    '{{ project_name }}.misc.context_processors.serve_media_locally',
     
     #AllAuth
     'allauth.account.context_processors.account',
@@ -257,9 +257,9 @@ if DJANGO_ENV == "PRODUCTION":
   # To make it easier to turn DEBUG on and off
   # heroku config:add DJANGO_DEBUG=true
   # heroku config:add DJANGO_DEBUG=false
-  DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
+  DEBUG = os.environ.get('DJANGO_DEBUG', 'false').lower() == 'true'
   TEMPLATE_DEBUG = DEBUG
-  IS_LOCAL = False
+  SERVE_MEDIA_LOCALLY = False
   
   #DATABASE
   import dj_database_url  
@@ -324,9 +324,9 @@ elif DJANGO_ENV == "TEST":
 elif DJANGO_ENV == "DEV":
   #BEHAVIOR FLAGS
   # To make it easier to turn DEBUG on and off
-  DEBUG = os.environ.get('DEBUG', 'false').lower() == 'true'
+  DEBUG = os.environ.get('DJANGO_DEBUG', 'true').lower() == 'true'
   TEMPLATE_DEBUG = DEBUG
-  IS_LOCAL = True  
+  SERVE_MEDIA_LOCALLY = True
   
   #DATABASE
   import dj_database_url
