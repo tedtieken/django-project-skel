@@ -1,5 +1,5 @@
-# Django 1.4 project template for fast Heroku deployment
 # {{ project_name|title }} Django Project #
+## Django 1.4 project template for fast Heroku deployment
 
 With bootstrap!
 
@@ -11,13 +11,14 @@ This is '''work in progress''' starting template for Django 1.4 projects.
 ## Skel Template Features ##
 #####Logical default file tree
 - Global assets, fixtures, applib directory.
-- Project template and misc directories by default
+- Project template and misc directories by default.
 - Collects static and media into assets/{static-destination,media} respectively.
 
 #####Deployment best practices by default
-- Encourages the use of virtualenv and virtualenvwrapper.
-- Encourages the use of pip and `requirements.txt`.
-- Encourages the use of git.
+- Uses virtualenv and virtualenvwrapper.
+- Uses pip and `requirements.txt`.
+- Uses of git.
+- Uses environment variables for secrets.
 - Includes a .gitignore for the usual junk.
 
 #####Sane settings.py configurations by default
@@ -37,8 +38,7 @@ This is '''work in progress''' starting template for Django 1.4 projects.
 * Includes storages, s3_folder_storage (allows separate directories for media and static)
 * Setup to use sendgrid for email delivery
 
-#####Common apps already installed
-* With reasonable default configurations
+#####Common apps already installed with reasonable default configuration
 * Django admin activated by default.
 * allauth
 * south
@@ -51,31 +51,22 @@ This is '''work in progress''' starting template for Django 1.4 projects.
 * Automatically builds a README with installation notes.
 
 
-## Recipies/Scripts to create project ##
-
-* https://gist.github.com/3266518
-* Run the following one of the following commands, specifying your project name:
-            
-    * To use Twitter's Bootstrap
-    
-            django-admin.py startproject --template https://github.com/tedtieken/django-project-skel/zipball/master --extension py,md,gitignore,dist yourprojectname
-
 
 ## Prerequisites ##
 
 - Heroku account, AWS account 
 - python2 >= 2.7, pip, virtualenv, git
 
-### First time system warm up.
+
+### First time system config/installation stuff.
 
 ``` bash
-$ easy_install pip
-$ pip install virtualenv, virtualenvwrapper
-$ brew install postgresql
-$ wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-$ heroku login
+  easy_install pip
+  pip install virtualenv, virtualenvwrapper
+  brew install postgresql
+  wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+  heroku login
 ```
-
 
 
 
@@ -84,6 +75,8 @@ Highly specific instructions for my preferences
 
 
 ## Preparing for a new project
+
+Gather domain credentials
 
 Collect AWS Credentials
 
@@ -97,119 +90,146 @@ Create s3 bucket
 2. Create Bucket {{ project_name }}-logging
 3. Create Bucket {{ project_name }}-assets-production, logging to ibid
 
-Gather domain credentials
 
 
 ## Start the new project
 Create Virtualenv
 ``` bash
-$ virtualenv --no-site-packages --distribute ~/ve/[project-name]
-$ source ~/ve/[project-name]/bin/activate
+  virtualenv --no-site-packages --distribute ~/ve/[project-name]
+  source ~/ve/[project-name]/bin/activate
 ``` 
 
 Install Django
 ``` bash
-$ pip install Django
+  pip install Django
 ``` 
 
 Start a project.
 ``` bash
-$ django-admin.py startproject --template https://github.com/tedtieken/django-project-skel/zipball/master --extension py,md,gitignore,dist [project-name]
-$ cd [project-name]
-$ touch virtenv_is_[project-name]
+  django-admin.py startproject --template https://github.com/tedtieken/django-project-skel/zipball/master --extension py,md,gitignore,dist [project-name]
+  cd [project-name]
+  touch virtenv_is_[project-name]
 ```
 
 Install base requirements.
 ``` bash
-$ pip install -r requirements.txt
-$ pip install -r requirements_dev.txt
+  pip install -r requirements.txt
+  pip install -r requirements_dev.txt
 ```
 
-## (Opt) Check for newer versions
-$ pip freeze | cut -d = -f 1 | xargs -n 1 pip search | grep -B2 'LATEST:'
-$ pip install [package] --upgrade
+(Optional) Check for newer versions
+``` bash
+  pip freeze | cut -d = -f 1 | xargs -n 1 pip search | grep -B2 'LATEST:'
+  pip install [package] --upgrade
+``` 
 
-## Create local .env file
-## NB see environment variables below if you'd rather 
-$ cp sample.env .env
+Create local .env file
+NB set raw environment variables if you'd rather, see discussion below 
+``` bash
+  cp sample.env .env
+``` 
 
-## Validate
-$ foreman run python manage.py validate
-
-## Create DB
-$ sudo -u postgres createuser user -P
-...
-Enter pass
-n
-y
-y
-...
-$ sudo -u postgres createdb -O user [project-name]
-
-## SyncDb
-$ foreman run python manage.py syncdb
-$ foreman run python manage.py migrate
-
-## Test
-$ foreman run python manage.py test
-
-## Fire up local/dev server
-$ foreman start
-... or ...
-$ foreman run python manage.py runserver 0.0.0.0:8000
-
-
-
-#Deploying
-## Create heroku app
-$ heroku create {{project_name}}
-$ heroku addons:add sendgrid:starter
-$ heroku addons:add heroku-postgresql:dev
-TODO: dns
-
-
-## Promote database
-$ heroku config
-...
-HEROKU_POSTGRESQL_[color]_URL: postgress://x:y@z.com:XXXX/ABCDEFGHIJ
-...
-$ heroku pg:promote HEROKU_POSTGRESQL_[color]
-
-## Configure Environment Variables
-$ heroku config:add DJANGO_ENV="PRODUCTION"
-$ heroku config:add DJANGO_DEBUG="false"
-$ heroku config:add AWS_ACCESS_KEY_ID=[KEY] 
-$ heroku config:add AWS_SECRET_ACCESS_KEY=[KEY] 
-
-## Create git repo
-$ git init
-Initialized empty Git repository in ...
-$ git add .
-$ git commit -m "initial commit"
-
-
-## Push repo to heroku
-$ git push heroku master
-
-## Get the remote DB working
-$ heroku run python manage.py syncdb
-$ heroku run python manage.py migrate
-
-## Get the remote static working
-$ heroku run python manage.py collectstatic
-
-
-
-# Check it out
-$ heroku open
-$ heroku logs --tail
-
-
+Validate
+``` bash
+  foreman run python manage.py validate
 ```
 
+Create DB
+``` bash
+  sudo -u postgres createuser user -P
+  ...
+  Enter pass
+  n
+  y
+  y
+  ...
+  sudo -u postgres createdb -O user [project-name]
+```
 
-# Deploying
-## Procfile settings
+Syncdb and migrate
+``` bash
+  foreman run python manage.py syncdb
+  foreman run python manage.py migrate
+``` 
+
+Run Tests
+``` bash
+  foreman run python manage.py test
+```
+
+Fire up local/dev server
+``` bash
+  foreman start
+  #... or ...
+  foreman run python manage.py runserver 0.0.0.0:8000
+``` 
+
+
+
+##Deploying
+###First time
+Create heroku app
+Add addons: sendgrid for email and postgress for database
+``` bash
+  heroku create {{project_name}}
+  heroku addons:add sendgrid:starter
+  heroku addons:add heroku-postgresql:dev
+```
+
+Promote database to DATABASE_URL
+``` bash
+  heroku config
+  ...
+  HEROKU_POSTGRESQL_[color]_URL: postgress://x:y@z.com:XXXX/ABCDEFGHIJ
+  ...
+  heroku pg:promote HEROKU_POSTGRESQL_[color]
+``` 
+
+Configure Environment Variables
+``` bash
+  heroku config:add DJANGO_ENV="PRODUCTION"
+  heroku config:add DJANGO_DEBUG="false"
+  heroku config:add AWS_ACCESS_KEY_ID=[KEY] 
+  heroku config:add AWS_SECRET_ACCESS_KEY=[KEY] 
+```
+
+Create git repo
+``` bash
+  git init
+  ... 
+  Initialized empty Git repository in ...
+  ...
+  git add .
+  git commit -m "initial commit"
+```
+
+###First time, and then after
+Push repo to heroku
+``` bash
+  git push heroku master
+```
+
+Sync and migrate the remote DB
+``` bash
+  heroku run python manage.py syncdb
+  heroku run python manage.py migrate
+```
+
+Get the remote static working
+If you haven't configured AWS correctly, this is going to break loudly
+``` bash
+  heroku run python manage.py collectstatic
+```
+
+Check it out
+``` bash
+  heroku open
+  heroku logs --tail
+```
+
+# Options, considerations, and commands worth discussing
+## Deploying
+### Procfile settings
 
 Dev only runserver.
 ``` 
@@ -244,23 +264,23 @@ web: newrelic-admin run-program gunicorn {{ project_name }}.wsgi -w 4 -b 0.0.0.0
 ``` 
 
 
-# Working Locally
-## Option 1: ENV Variables and vanilla manage.py - Not recommended
+## Working Locally
+### Option 1: ENV Variables and vanilla manage.py - Not recommended
 Set DEV environment variables, use standard django runserver command
 ``` bash
-$ export DJANGO_DEBUG=True
-$ export DJANGO_ENV=DEV
+  export DJANGO_DEBUG=True
+  export DJANGO_ENV=DEV
 
-$ python manage.py runserver 0.0.0.0:8000
+  python manage.py runserver 0.0.0.0:8000
 ``` 
 Not preferred because: 1) less dev-prod parity 2a) environment variables set like this aren't confined to the virtual environment 2b) they aren't maintained between virtenv sessions either (unless you set them in virtenv wrapper) 3) linux environment variables set with export aren't shared between shell sessions
 
 
-## Option 2: Heroku Foreman - Preferred
+### Option 2: Heroku Foreman - Preferred
 Use .env file for environment variables, foreman spools up processes from the Procfile
 ``` bash
-$ cp sample.env .env
-$ foreman start
+  cp sample.env .env
+  foreman start
 ...
 18:29:37 web.1  | started with pid 29000
 18:29:38 web.1  | 2012-12-05 23:29:38 [29002] [INFO] Starting gunicorn 0.16.1
@@ -273,97 +293,98 @@ Preferred because creates closet dev-prod parity.  Automatically spools up worke
 
 Running management and other commands that import django settings file
 ``` bash
-$ foreman run python manage.py [command]
-$ foreman run python manage.py runserver 0.0.0.0:8000
+  foreman run python manage.py [command]
+  foreman run python manage.py runserver 0.0.0.0:8000
 ``` 
 
-## Option 3: VirtualenvWrapper PostActivate
+### Option 3: VirtualenvWrapper PostActivate
 http://stackoverflow.com/questions/9554087/setting-an-environment-variable-in-virtualenv
 
 
 
 
-#Working with VirtEnv
+## Working with VirtEnv
 Put in home directory so VirtualBox symlink doesn't have issues
 ``` bash
-$ virtualenv --no-site-packages --distribute ~/ve/[project-name]
-$ source ~/ve/[project-name]/bin/activate
-$ deactivate
+  virtualenv --no-site-packages --distribute ~/ve/[project-name]
+  source ~/ve/[project-name]/bin/activate
+  deactivate
 ``` 
 
 For future reference, note where the virtenv is stored
 ``` bash
-$ touch virtenv_is_[project-name]
+  touch virtenv_is_[project-name]
 ```
 
 Getting a specific python version
 http://stackoverflow.com/questions/1534210/use-different-python-version-with-virtualenv
 ``` bash
-$ virtualenv -p /usr/bin/python2.6
+  virtualenv -p /usr/bin/python2.6
 ... or with wrapper ...
-$ mkvirtualenv -p python2.6 env
+  mkvirtualenv -p python2.6 env
 ``` 
 
 
 
-# Working with PIP
-## Install from requirements.txt
+## Working with PIP
+Install from requirements.txt
 ``` bash
-$ pip install -r requirements.txt
-$ pip install -r requirements_dev.txt
-```
-## Freezing to reequirements.txt
-``` bash
-$ pip freeze > requirements.txt
+  pip install -r requirements.txt
+  pip install -r requirements_dev.txt
 ```
 
-## Checking for later versions
+Freezing to reequirements.txt
 ``` bash
-$ pip freeze | cut -d = -f 1 | xargs -n 1 pip search | grep -B2 'LATEST:'
+  pip freeze > requirements.txt
+```
+
+Checking for later versions fo packages
+``` bash
+  pip freeze | cut -d = -f 1 | xargs -n 1 pip search | grep -B2 'LATEST:'
 ``` 
 
-## Upgrading
+Upgrading a package
 ``` bash
-$ pip install --upgrade [package] 
+  pip install --upgrade [package] 
 ``` 
 
-## Uninstalling
+Uninstalling a package
 ``` bash
-$ pip uninstall [package]
+  pip uninstall [package]
 ``` 
 
-## Additional things sometimes put in requirements
+### Additional things sometimes put in requirements
 http://www.deploydjango.com/django_project_structure/index.html#step-2-define-your-requirements
 
 
 
 
-# Setting up databases
-## Local Postgres DB
+## Setting up databases
+### Local Postgres DB
 For dev/prod parity it is recommended that postgres be used locally as well as remotely
 ``` bash
-$ sudo -u postgres createdb [whatever]
+  sudo -u postgres createdb [whatever]
 ```
 
-## Postgres on Heroku
+### Postgres on Heroku
 Adding a db to your plan
 ``` bash
-$ heroku addons:add heroku-postgresql:dev
+  heroku addons:add heroku-postgresql:dev
 ```
 
 Getting info on your dbs
 ``` bash
-$ heroku pg:info
+  heroku pg:info
 ``` 
 
 Promoting a db to DATABASE_URL
 ``` bash
-$ heroku config
+  heroku config
 ...
 HEROKU_POSTGRESQL_[color]_URL: postgress://x:y@z.com:XXXX/ABCDEFGHIJ
 ...
-$ heroku pg:promote HEROKU_POSTGRESQL_[color]_URL
-$ heroku config
+  heroku pg:promote HEROKU_POSTGRESQL_[color]_URL
+  heroku config
 ...
 HEROKU_POSTGRESQL_[color]_URL: postgress://x:y@z.com:XXXX/ABCDEFGHIJ
 DATABASE_URL:                  postgress://x:y@z.com:XXXX/ABCDEFGHIJ
@@ -373,84 +394,42 @@ DATABASE_URL:                  postgress://x:y@z.com:XXXX/ABCDEFGHIJ
 
 
 
-# Setting Environment Variables
-## Locally Option 1 -- Not recommended
+## Setting Environment Variables
+### Locally Option 1 -- Not recommended
 (see working locally above)
 Setting and Verifying
 ``` bash
-$ export DJANGO_ENV=DEV
-$ echo $DJANGO_ENV
+  export DJANGO_ENV=DEV
+  echo $DJANGO_ENV
 ```
 
 Deleting
 ``` bash
-$ unset DJANGO_ENV
+  unset DJANGO_ENV
 ```
-## Locally Option 2 -- recommended
+### Locally Option 2 -- recommended
 (see working locally above)
 Use a .env file and foreman
 
 
-## On Heroku
-Setting and Verifying
+### On Heroku (Production and Staging/Testing)
+Seeing environment variables on heroku
 ``` bash
-$ heroku config:add DJANGO_ENV=PRODUCTION
+  heroku config
 ```
 
-Deleting
+Setting an environment variable on heroku
 ``` bash
-$ heroku config:remove DJANGO_ENV
+  heroku config:add DJANGO_ENV=PRODUCTION
 ```
 
-
-#Notes and Niceties
-([psycopg2](http://initd.org/psycopg/) is a PostgreSQL adapter for Python.
-mysql-python is a MySQL adapter for Python)
-
-To make `.manage.py` executable (so you don't have to type `python manage.py ...` all the time).
+Deleting an environment variable on heroku
 ``` bash
-$ chmod +x manage.py
+  heroku config:remove DJANGO_ENV
 ```
 
 
-
-## Other steps
-
-TODO: Set environment variables
-
-TODO:Download base templates
-``` bash
-$ heroku config:set DJANGO_ENV=PRODUCTION
-```
-
-TODO: Heroku deploy steps
-``` bash
-$ python manage.py test
-``` 
-
-
-
-``` bash
-$ git init
-Initialized empty Git repository in /Users/kreitz/hellodjango/.git/
-$ git add .
-$ git commit -m "my django app"
-``` 
-
-
-``` bash
-$ heroku create
-$ heroku addons:add heroku-postgresql:dev
-$ git push heroku master
-$ heroku run ./manage.py syncdb
-$ heroku open
-```
-
-
-
-
-## Update your database with [South][south] and push the changes to Heroku
-
+## Updating database with [South][south]
 1. Make changes to your models
 2. `$ ./manage.py schemamigration [appname] --auto`
 3. `$ ./manage.py migrate [appname]`
@@ -462,27 +441,38 @@ $ heroku open
 Whenever you work on your project, you'll want to activate your virtualenv:
 
 ``` bash
-$ source ve/bin/activate
+  source ve/bin/activate
 ```
 
 Then load any new requirements:
 
 ``` bash
-$ pip install -r requirements.txt
+  pip install -r requirements.txt
 ```
 
 Sync and/or migrate your database:
 
 ``` bash
-$ ./manage.py syncdb
-$ ./manage.py migrate [appname]
+  ./manage.py syncdb
+  ./manage.py migrate [appname]
 ```
 
 Finally, fire up your server:
 
 ``` bash
-$ ./manage.py runserver 0.0.0.0:8000
+  ./manage.py runserver 0.0.0.0:8000
 ```
+
+## Notes and Niceties
+([psycopg2](http://initd.org/psycopg/) is a PostgreSQL adapter for Python.
+mysql-python is a MySQL adapter for Python)
+
+To make `.manage.py` executable (so you don't have to type `python manage.py ...` all the time).
+``` bash
+  chmod +x manage.py
+```
+
+
 
 ## Things done on purpose and why
 ### Secret_key not put into environment variable
@@ -496,12 +486,24 @@ SECRET_KEY = environ.get('SECRET_KEY')
 #Just not doing it -- Best
 ``` 
 
-## Foreman(ruby) instead of Honcho(python)
+### Foreman(ruby) instead of Honcho(python)
 As of 12/5/12 Honcho is ~Foreman written in python, less used, and a few features behind.  As it is a tool, and I haven't yet really had to dive into the guts, ruby seems fine to me for now.
 
 
+## Configuration/settings samples
+``` 
+CACHES = {
+  'default': {
+    'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+    'LOCATION': '127.0.0.1:11211',
+  }
+}    
+```   
 
-### [Re]Sources
+
+## [Re]Sources
 
 - [Part 1: The Basics &mdash; South v0.7 documentation](http://south.aeracode.org/docs/tutorial/part1.html)
 - [Getting Started with Django on Heroku/Cedar | Heroku Dev Center](https://devcenter.heroku.com/articles/django)
@@ -509,53 +511,17 @@ As of 12/5/12 Honcho is ~Foreman written in python, less used, and a few feature
 - [PAAS bakeoff](http://appsembler.com/blog/paas-bakeoff-comparing-stackato-openshift-dotcloud-and-heroku-for-django-hosting-and-deployment/)
 - [Rails like environs with django](http://www.elfsternberg.com/2009/10/14/rails-like-environments-with-django/)
 - [Dev Guide to Django on Heroku](http://kencochrane.net/blog/2011/11/developers-guide-for-running-django-apps-on-heroku/)
-
 - [south](http://south.aeracode.org/)
-
 - [Django-Skel](https://github.com/rdegges/django-skel)
 - [Django-prokect-skel](https://github.com/amccloud/django-project-skel)
 - [Django-project-skel](https://github.com/seanbrant/django-project-skeleton)
-
-#TODOS
-
-Add deployment
-Add template skel download
-
-Add newrelic
-
-Research, consider gunicorn/gevent
-Research, consider uwsgi
-
-Write as a fabfile
-
-Logs to s3
-
-## Apps to consider
-
-Static file management:
-'compressor',
-
-Asynchronous task queue:
-'djcelery',
-
-'django-annoying'
-'imagekit',
-django-jenkins
-django-pipeline
-django-postgrespool
-django-heroku-memcachify
+- https://github.com/caktus/django-project-template
+- https://gist.github.com/3266518
+- http://www.12factor.net
+- https://newrelic.com/docs/python/django-on-heroku-quick-start
+- https://newrelic.com/docs/python/python-agent-and-heroku
+- https://newrelic.com/docs/python/python-agent-and-gunicorn
+- https://github.com/chrisfranklin/django-project-skel
+- http://kencochrane.net/blog/2011/11/developers-guide-for-running-django-apps-on-heroku/
 
 
-
-# Configuration samples
-CACHES = {
-  'default': {
-    'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    #'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-    'LOCATION': '127.0.0.1:11211',
-  }
-}    
-  
-https://newrelic.com/docs/python/django-on-heroku-quick-start
-https://newrelic.com/docs/python/python-agent-and-heroku
-https://newrelic.com/docs/python/python-agent-and-gunicorn
