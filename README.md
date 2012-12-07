@@ -5,7 +5,9 @@ With bootstrap!
 
 ## About
 
-This is '''work in progress''' starting template for Django 1.4 projects.
+This is a template for starting Django 1.4 projects and rapidly deploying to heroku.  It is opinionated and configured for the things that I like and repetitively end up adding before deployment.  
+
+This is a first version, while it has been tested and used it is not promised to be complete or bug free.
 
 
 ## Skel Template Features ##
@@ -61,11 +63,11 @@ This is '''work in progress''' starting template for Django 1.4 projects.
 ### First time system config/installation stuff.
 
 ``` bash
-  easy_install pip
-  pip install virtualenv, virtualenvwrapper
-  brew install postgresql
-  wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-  heroku login
+easy_install pip
+pip install virtualenv, virtualenvwrapper
+brew install postgresql
+wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+heroku login
 ```
 
 
@@ -76,19 +78,15 @@ Highly specific instructions for my preferences
 
 ## Preparing for a new project
 
-Gather domain credentials
-
-Collect AWS Credentials
-
-1. AWS Management Console > IAM > Users > Create new user > {{ project_name }}
-2. Record credentials
-3. Bottom Pane, Permissions Tab > Attach User Policy > S3 Full access
-
-Create s3 bucket
-
-1. AWS Management Console > S3 
-2. Create Bucket {{ project_name }}-logging
-3. Create Bucket {{ project_name }}-assets-production, logging to ibid
+* Gather domain credentials
+* Collect AWS Credentials
+    1. AWS Management Console > IAM > Users > Create new user > {{ project_name }}
+    2. Record credentials
+    3. Bottom Pane, Permissions Tab > Attach User Policy > S3 Full access
+* Create s3 bucket
+    1. AWS Management Console > S3 
+    2. Create Bucket {{ project_name }}-logging
+    3. Create Bucket {{ project_name }}-assets-production, logging to ibid
 
 
 
