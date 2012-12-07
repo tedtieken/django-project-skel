@@ -11,7 +11,7 @@ This is a first version, while it has been tested and used it is not promised to
 
 
 ## Skel Template Features ##
-#####Logical default file tree
+* #####Logical default file tree
 - Global assets, fixtures, applib directory.
 - Project template and misc directories by default.
 - Collects static and media into assets/{static-destination,media} respectively.
@@ -90,11 +90,12 @@ Highly specific instructions for my preferences
 
 
 
+
 ## Start the new project
 Create Virtualenv
 ``` bash
-  virtualenv --no-site-packages --distribute ~/ve/[project-name]
-  source ~/ve/[project-name]/bin/activate
+    virtualenv --no-site-packages --distribute ~/ve/[project-name]
+    source ~/ve/[project-name]/bin/activate
 ``` 
 
 Install Django
