@@ -75,7 +75,7 @@ heroku login
 
 # Installation #
 ## Preparing for a new project
-
+ 
 * Gather domain credentials
 * Collect AWS Credentials
     1. AWS Management Console > IAM > Users > Create new user > [project_name]
@@ -425,6 +425,21 @@ heroku config:remove DJANGO_ENV
 3. `$ ./manage.py migrate [appname]`
 4. [commit & push changes to heroku]
 5. `$ heroku run ./manage.py migrate [appname]`
+
+
+#Frontend
+## Bootstrap
+
+Getting latest version of bootstrap
+``` bash
+cd assets/assets
+wget http://twitter.github.com/bootstrap/assets/bootstrap.zip && unzip bootstrap && rm bootstrap.zip 
+
+
+wget  --no-check-certificate https://github.com/addyosmani/jquery-ui-bootstrap/zipball/v0.23 && unzip v0.23
+cp -r addyosmani-jquery-ui-bootstrap-cf2a77b/ jquery-ui-bootstrap
+
+``` bash
 
 
 ## Notes and Niceties
