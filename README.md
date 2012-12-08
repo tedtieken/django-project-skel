@@ -237,6 +237,8 @@ heroku logs --tail
 
 That's it, you're configured and deployed.  Now go build something awesome.
 
+##Housekeeping
+- Login to admin and set site, so emails don't come from example.com
 
 
 # Options, considerations, and commands worth discussing

@@ -1,11 +1,8 @@
 #TODOS
 
-Debug toolbar keyed to DJANGO_DEBUG or DJANGO_DEBUG_TOOLBAR env variable
-Add template skel download  
 Add newrelic
 DNS
 
-PG Backup
 Add cron
 
 Logs - to s3?
