@@ -17,7 +17,7 @@ This is a first version, while it has been tested and used it is not promised to
 #####Logical default file tree
 - Global assets, fixtures, applib directory.
 - Project template and misc directories by default.
-- Collects static and media into assets/{static-destination,media} respectively.
+- Collects static and media into `assets/{static-destination,media}` respectively.
 
 #####Deployment best practices by default
 - Uses virtualenv and virtualenvwrapper.
@@ -30,13 +30,13 @@ This is a first version, while it has been tested and used it is not promised to
 * Timezone set to UTC.
 * Discourages storing credentials and secrets in the repository.
 * Encourages storing credentials and secrets in environment variables 
-* Uses env['DJANGO_ENV'] to configure settings for each environment ['PRODUCTION', 'TEST', 'DEV'] in a single settings.py file that gets stored in repo
+* Uses `env['DJANGO_ENV']` to configure settings for each environment `['PRODUCTION', 'TEST', 'DEV']` in a single settings.py file that gets stored in repo
 * Tolerates the use of `local_settings.py` file, by default only in DEV.
 
 #####Encourages simple separation of apps by type: 
 * Unmodified 3rd party apps installed to virtualenv site-packages 
-* Modified 3rd party apps placed in applib/ directory, applib/ added to path
-* Apps specific to project to be created in project_name/[app_name] directory
+* Modified 3rd party apps placed in `applib/` directory, applib/ added to path
+* Apps specific to project to be created in `project_name/[app_name]` directory
 
 #####Ready for Heroku Deployment
 * Includes Procfile, using gunicorn
@@ -55,6 +55,18 @@ This is a first version, while it has been tested and used it is not promised to
 * TODO: bootstrap driven base.html
 * Automatically builds a README with installation notes.
 
+####Template
+* Twitter Bootstrap based template included
+* JQuery & Twitter Bootstrap themed JQUI included
+* AllAuth login signup manage links already in header
+* JS in footer for faster page loading
+* Google analytics and Addthis code in base.html, commented out
+
+###Template blocks cascade
+* js > extra-js, css > extra-css, head > extra-head
+* any use of an extra-[foo] block should include call to super
+* `block content` is inside of a `block canvas` allowing for app level layouts while still using common `block content` idiom without a call to super at the page level
+* expects base.html > app-base.html > view.html series of cascades
 
 
 ## Prerequisites ##
@@ -81,10 +93,11 @@ heroku login
     1. AWS Management Console > IAM > Users > Create new user > [project_name]
     2. Record credentials
     3. Bottom Pane, Permissions Tab > Attach User Policy > S3 Full access
+    NB: This is a convenience shortcut, for production access should be limited to specific buckets.
 * Create s3 bucket
     1. AWS Management Console > S3 
     2. Create Bucket [project_name]-logging
-    3. Create Bucket [project_name]-assets-production, logging to ibid
+    3. Create Bucket [project_name]-assets-production, logging to ibid, prefix s3
 
 
 ## Start the new project
@@ -113,16 +126,17 @@ pip install -r requirements_dev.txt
 ```
 
 (Optional) Check for newer versions
+Note that this command isn't instant, it can take a few seconds to start showing output.  This is normal.
 ``` bash
 pip freeze | cut -d = -f 1 | xargs -n 1 pip search | grep -B2 'LATEST:'
 pip install [package] --upgrade
 ``` 
 
 Create local .env file
-NB set raw environment variables if you'd rather, see discussion below 
 ``` bash
-cp sample.env .env
+cp sample.env .env && rm sample.env
 ``` 
+NB there are other ways to manage dev environment variables, see discussion below.  
 
 Validate
 ``` bash
@@ -143,8 +157,7 @@ sudo -u postgres createdb -O user [project-name]
 
 Syncdb and migrate
 ``` bash
-foreman run python manage.py syncdb
-foreman run python manage.py migrate
+foreman run python manage.py syncdb && foreman run python manage.py migrate
 ``` 
 
 Run Tests
@@ -166,9 +179,10 @@ foreman run python manage.py runserver 0.0.0.0:8000
 Create heroku app
 Add addons: sendgrid for email and postgress for database
 ``` bash
-heroku create [project_name]
+heroku create
 heroku addons:add sendgrid:starter
 heroku addons:add heroku-postgresql:dev
+heroku addons:add pgbackups:auto-month
 ```
 
 Promote database to DATABASE_URL
@@ -206,8 +220,7 @@ git push heroku master
 
 Sync and migrate the remote DB
 ``` bash
-heroku run python manage.py syncdb
-heroku run python manage.py migrate
+heroku run python manage.py syncdb && heroku run python manage.py migrate
 ```
 
 Get the remote static working
@@ -221,6 +234,10 @@ Check it out
 heroku open
 heroku logs --tail
 ```
+
+That's it, you're configured and deployed.  Now go build something awesome.
+
+
 
 # Options, considerations, and commands worth discussing
 ## Deploying
@@ -441,6 +458,15 @@ cp -r addyosmani-jquery-ui-bootstrap-cf2a77b/ jquery-ui-bootstrap
 
 ``` bash
 
+## Template Setup
+
+In Base.html remember to
+- Set Page Title base
+- Set addthis key
+- Set google analytics variables, uncomment google analytics section
+
+In file directory
+- Add favicons to assets/assets/ico
 
 ## Notes and Niceties
 ([psycopg2](http://initd.org/psycopg/) is a PostgreSQL adapter for Python.
