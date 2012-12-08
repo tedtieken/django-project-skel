@@ -73,12 +73,7 @@ wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 heroku login
 ```
 
-
-
 # Installation #
-Highly specific instructions for my preferences
-
-
 ## Preparing for a new project
 
 * Gather domain credentials
@@ -90,8 +85,6 @@ Highly specific instructions for my preferences
     1. AWS Management Console > S3 
     2. Create Bucket [project_name]-logging
     3. Create Bucket [project_name]-assets-production, logging to ibid
-
-
 
 
 ## Start the new project
