@@ -455,8 +455,7 @@ wget http://twitter.github.com/bootstrap/assets/bootstrap.zip && unzip bootstrap
 
 wget  --no-check-certificate https://github.com/addyosmani/jquery-ui-bootstrap/zipball/v0.23 && unzip v0.23
 cp -r addyosmani-jquery-ui-bootstrap-cf2a77b/ jquery-ui-bootstrap
-
-``` bash
+```
 
 ## Template Setup
 
