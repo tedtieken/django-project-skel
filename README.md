@@ -183,6 +183,7 @@ heroku create
 heroku addons:add sendgrid:starter
 heroku addons:add heroku-postgresql:dev
 heroku addons:add pgbackups:auto-month
+heroku addons:add newrelic:standard
 ```
 
 Promote database to DATABASE_URL
@@ -458,6 +459,11 @@ wget http://twitter.github.com/bootstrap/assets/bootstrap.zip && unzip bootstrap
 wget  --no-check-certificate https://github.com/addyosmani/jquery-ui-bootstrap/zipball/v0.23 && unzip v0.23
 cp -r addyosmani-jquery-ui-bootstrap-cf2a77b/ jquery-ui-bootstrap
 ```
+
+Bootstrap resources
+- http://bootsnipp.com
+- http://fontcustom.com/
+
 
 ## Template Setup
 

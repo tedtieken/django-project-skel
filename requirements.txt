@@ -1,4 +1,4 @@
-#Latest versions as of 12/3/2012
+#Latest versions as of 12/9/2012
 #Core packages
 distribute==0.6.27
 django==1.4.2
@@ -9,6 +9,7 @@ dj-database-url==0.2.1
 django-storages==1.1.5
 django-s3-folder-storage==0.1
 psycopg2==2.4.5
+newrelic==1.8.0.13
 
 #Enabling packages
 argparse==1.2.1
