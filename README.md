@@ -87,7 +87,9 @@ heroku login
 
 # Installation #
 ## Preparing for a new project
- 
+
+There is some wait time while pip installs requirements and while running the first set of tests, these steps can be delayed until waiting for tasks to complete.
+
 * Gather domain credentials
 * Collect AWS Credentials
     1. AWS Management Console > IAM > Users > Create new user > [project_name]

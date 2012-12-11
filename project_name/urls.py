@@ -12,7 +12,7 @@ urlpatterns += patterns("",
 
 
 #Custom URLS
-urlpatterns = patterns('',
+urlpatterns += patterns('',
   #Account management, baked in  
   url(r'^accounts/', include('allauth.urls')),
 
