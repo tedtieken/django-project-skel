@@ -1,7 +1,7 @@
-#Latest versions as of 12/9/2012
+#Latest versions as of 12/11/2012
 #Core packages
 distribute==0.6.27
-django==1.4.2
+django==1.4.3
 South==0.7.6
 gunicorn==0.16.1
 django-allauth==0.8.3
