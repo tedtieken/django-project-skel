@@ -167,7 +167,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     #'allauth.socialaccount.providers.facebook',
     #'allauth.socialaccount.providers.twitter',
-
+    
     
     ##### APPLIB_APPS #####
     # 3rd party apps that have been modified and placed in /applib
@@ -356,6 +356,7 @@ elif DJANGO_ENV == "DEV":
     
   #ENVIRONMENT APP ADDITIONS
   INSTALLED_APPS += (
+    'functests',
     'debug_toolbar',
   )
 

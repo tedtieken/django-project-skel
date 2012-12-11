@@ -174,8 +174,8 @@ foreman run python manage.py runserver 0.0.0.0:8000
 
 
 
-##Deploying
-###First time
+## Deploying
+### First time
 Create heroku app
 Add addons: sendgrid for email and postgress for database
 ``` bash
@@ -184,6 +184,7 @@ heroku addons:add sendgrid:starter
 heroku addons:add heroku-postgresql:dev
 heroku addons:add pgbackups:auto-month
 heroku addons:add newrelic:standard
+heroku addons:add scheduler:standard
 ```
 
 Promote database to DATABASE_URL
@@ -213,7 +214,7 @@ git add .
 git commit -m "initial commit"
 ```
 
-###First time, and then after
+### First time, and then after
 Push repo to heroku
 ``` bash
 git push heroku master
@@ -445,6 +446,10 @@ heroku config:remove DJANGO_ENV
 3. `$ ./manage.py migrate [appname]`
 4. [commit & push changes to heroku]
 5. `$ heroku run ./manage.py migrate [appname]`
+
+
+# Testing
+http://www.tdd-django-tutorial.com
 
 
 #Frontend

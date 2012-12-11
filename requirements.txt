@@ -11,6 +11,9 @@ django-s3-folder-storage==0.1
 psycopg2==2.4.5
 newrelic==1.8.0.13
 
+#Testing Packages
+selenium==2.27.0
+
 #Enabling packages
 argparse==1.2.1
 boto==2.6.0

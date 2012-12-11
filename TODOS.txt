@@ -1,17 +1,15 @@
 #TODOS
 
-Add newrelic
+/functest folder for integration tests
 DNS
-
 Add cron
-
 Logs - to s3?
+
 logging setup
 /logs folder in root?
 
 /docs folder
 /deploy folder
-/test folder for integration tests
 
 Proofread readme
 
@@ -81,3 +79,7 @@ django-nose
 nose-exclude
 pep8
 pylint
+
+
+
+Should we really separate requirements?  If the packages aren't imported, they don't take up memory, thus the downside is 1) a few seconds of deploy time and 2) server space.  There is also a risk of mis-configuration leading to something being imported that shouldn't be. The downsides and risks seem minimal.
