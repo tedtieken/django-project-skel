@@ -162,6 +162,11 @@ Syncdb and migrate
 foreman run python manage.py syncdb && foreman run python manage.py migrate
 ``` 
 
+Collect static
+``` bash
+foreman run python manage.py collectstatic
+```
+
 Run Tests
 ``` bash
 foreman run python manage.py test
