@@ -103,6 +103,7 @@ There is some wait time while pip installs requirements and while running the fi
 
 
 ## Start the new project
+### First time setups steps
 Create Virtualenv
 ``` bash
 virtualenv --no-site-packages --distribute ~/ve/[project-name]
@@ -124,7 +125,6 @@ touch virtenv_is_[project-name]
 Install base requirements.
 ``` bash
 pip install -r requirements.txt
-pip install -r requirements_dev.txt
 ```
 
 (Optional) Check for newer versions
@@ -157,6 +157,8 @@ y
 sudo -u postgres createdb -O user [project-name]
 ```
 
+
+### Local changes script
 Syncdb and migrate
 ``` bash
 foreman run python manage.py syncdb && foreman run python manage.py migrate
@@ -183,10 +185,23 @@ foreman run python manage.py runserver 0.0.0.0:8000
 
 ## Deploying
 ### Preparing for first deploy
+Create git repo
+``` bash
+git init
+... 
+Initialized empty Git repository in ...
+...
+git add .
+git commit -m "initial commit"
+```
+
 Create heroku app
+``` bash
+heroku create [appname]
+```
+
 Add addons: sendgrid for email and postgress for database
 ``` bash
-heroku create
 heroku addons:add sendgrid:starter
 heroku addons:add heroku-postgresql:dev
 heroku addons:add pgbackups:auto-month
@@ -205,26 +220,26 @@ heroku pg:promote HEROKU_POSTGRESQL_[color]
 
 Configure Environment Variables
 ``` bash
-heroku config:add DJANGO_ENV="PRODUCTION"
-heroku config:add DJANGO_DEBUG="false"
-heroku config:add AWS_ACCESS_KEY_ID=[KEY] 
-heroku config:add AWS_SECRET_ACCESS_KEY=[KEY] 
+heroku config:set DJANGO_ENV="PRODUCTION" DJANGO_DEBUG="false" 
+heroku config:set AWS_ACCESS_KEY_ID=[KEY] AWS_SECRET_ACCESS_KEY=[KEY] 
 ```
 
-Create git repo
-``` bash
-git init
-... 
-Initialized empty Git repository in ...
-...
-git add .
-git commit -m "initial commit"
-```
 
 ### Regular Deploy Script
 Run All Tests
 ``` bash
 foreman run python manage.py test
+```
+
+Freeze Pip state
+``` bash
+pip freeze > requirements.txt
+```
+
+Commit Changes
+``` bash
+git add .
+git commit -m "message"
 ```
 
 Push repo to heroku
@@ -237,10 +252,10 @@ Sync and migrate the remote DB
 heroku run python manage.py syncdb && heroku run python manage.py migrate
 ```
 
-Get the remote static working
+Collect remote static
 If you haven't configured AWS correctly, this is going to break loudly
 ``` bash
-heroku run python manage.py collectstatic
+heroku run python manage.py collectstatic --noinput
 ```
 
 Go see your site in action
@@ -397,7 +412,6 @@ mkvirtualenv -p python2.6 env
 Install from requirements.txt
 ``` bash
 pip install -r requirements.txt
-pip install -r requirements_dev.txt
 ```
 
 Freezing to reequirements.txt
@@ -553,6 +567,21 @@ SECRET_KEY = environ.get('SECRET_KEY', SECRET_KEY)
 SECRET_KEY = environ.get('SECRET_KEY')
 #Just not doing it -- Best
 ```
+
+### Requirements not split into ENV specific files
+Some setups create a requirements file for _dev, _test, _prod, _common, and even go as far as to keep these in a separate folder. This is purposefully not done. 
+
+The upsides of a single requirements.txt: 
+1) It keeps closer dev/prod parity
+2) If the packages aren't imported in production, they don't take up RAM
+3) No extra steps required after pip freeze > requirements.txt
+4) When something goes wrong in staging/test environment that works in dev, removes a debugging step
+
+The downsides and risks of a single requirements.txt
+1) Extra time for deploy/cold node startup while the server downloads the additional packages 
+2) Unused packages take server space
+3) Risk of mis-configuration silent failure in produciton
+
 
 ### Foreman(ruby) instead of Honcho(python)
 As of 12/5/12 Honcho is ~Foreman written in python, less used, and a few features behind.  As it is a tool, and I haven't yet really had to dive into the guts, ruby seems fine to me for now.
