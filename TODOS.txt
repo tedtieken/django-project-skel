@@ -1,46 +1,43 @@
 #TODOS
 
-/functest folder for integration tests
-DNS
-Add cron
-Logs - to s3?
+
+Should we really separate requirements?  If the packages aren't imported, they don't take up memory, thus the downside is 1) a few seconds of deploy time and 2) server space.  There is also a risk of mis-configuration silent failure in produciton -- leading to something being imported that shouldn't be. The downsides and risks seem minimal.
+
+Add readme on cron/scheduler
 
 logging setup
-/logs folder in root?
+Logs - to s3?
+
+Upgrade to django 1.5
 
 /docs folder
+?Sphinx
+?Move to RTFD
+
 /deploy folder
 
-Proofread readme
-
-Research, consider gunicorn/gevent
-Research, consider uwsgi
-Research, consider sentry
+Research, consider sentry/raven
 Research, consider virtualenvwrapper
-
 Research Vagrant
 
-Write as a fabfile
-Add celery/rabitmq
-Add memcached
-gunicorn.py.ini 
+Write a fabfile
+Add readme on celery/rabitmq/kombu
+Add readme memcached/redis
+? Add readme on gunicorn/gevent
 
-?/docs folder
-?Sphinx
+Static file management:
+  'compressor', 'jsmin', 'cssmin'
+  vs
+  django-pipeline
+  
+Continuous Integration
 
-## Apps to consider/add
+?Add bootstrap goodies (icons)
+?Add rocket-launch/privatebeta/invitation
 
 ### Additional things sometimes put in requirements
 http://www.deploydjango.com/django_project_structure/index.html#step-2-define-your-requirements
 
-
-
-Static file management:
-'compressor', 'jsmin', 'cssmin'
-vs
-django-pipeline
-
-'djcelery',
 
 tastypie?
 django-extensions
@@ -81,5 +78,3 @@ pep8
 pylint
 
 
-
-Should we really separate requirements?  If the packages aren't imported, they don't take up memory, thus the downside is 1) a few seconds of deploy time and 2) server space.  There is also a risk of mis-configuration leading to something being imported that shouldn't be. The downsides and risks seem minimal.

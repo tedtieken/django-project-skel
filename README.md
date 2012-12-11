@@ -175,7 +175,7 @@ foreman run python manage.py runserver 0.0.0.0:8000
 
 
 ## Deploying
-### First time
+### Preparing for first deploy
 Create heroku app
 Add addons: sendgrid for email and postgress for database
 ``` bash
@@ -214,7 +214,12 @@ git add .
 git commit -m "initial commit"
 ```
 
-### First time, and then after
+### Regular Deploy Script
+Run All Tests
+``` bash
+foreman run python manage.py test
+```
+
 Push repo to heroku
 ``` bash
 git push heroku master
@@ -231,7 +236,7 @@ If you haven't configured AWS correctly, this is going to break loudly
 heroku run python manage.py collectstatic
 ```
 
-Check it out
+Go see your site in action
 ``` bash
 heroku open
 heroku logs --tail
@@ -239,8 +244,32 @@ heroku logs --tail
 
 That's it, you're configured and deployed.  Now go build something awesome.
 
-##Housekeeping
+
+## Housekeeping
 - Login to admin and set site, so emails don't come from example.com
+
+### Getting custom domain set up
+https://devcenter.heroku.com/articles/custom-domains
+https://devcenter.heroku.com/articles/avoiding-naked-domains-dns-arecords
+
+If you set up one of heroku's [adjective]-[item]-[number] app names, rename to your domain
+``` bash
+heroku apps:rename [domain]
+```
+Note that if you change this via the website you'll have to move around the git remotes and do a checkout: https://devcenter.heroku.com/articles/renaming-apps
+
+
+Add the domain
+``` bash
+heroku domains:add www.[domain].com
+```
+
+Setup CNAME for www to [appname].herokuapp.com
+Setup forwarding for naked domain to www.[domain].com
+
+Wait ~15-60 minutes
+
+Alternatively, the zerigo DNS app is another way to set this up that may be preferred.
 
 
 # Options, considerations, and commands worth discussing
@@ -252,32 +281,47 @@ Dev only runserver.
 web: python manage.py runserver "0.0.0.0:$PORT"
 ``` 
 
-Minimal acceptable production setup gunicorn server
+Standard #1: production setup gunicorn server
 ``` 
 python manage.py run_gunicorn 0.0.0.0:$PORT -w 3
 ``` 
 
-Mid with newrelic and gunicorn
+Standard #2: newrelic and gunicorn  **Recommended starting setup**
 https://newrelic.com/docs/python/django-on-heroku-quick-start
 ``` 
-web: newrelic-admin run-program python hellodjango/manage.py run_gunicorn -b "0.0.0.0:$PORT" -w 3
+web: newrelic-admin run-program python manage.py run_gunicorn -b "0.0.0.0:$PORT" -w 3
+``` 
+
+Standard #3: newrelic, gunicorn, and celery scheduler/worker
+https://newrelic.com/docs/python/django-on-heroku-quick-start
+Note: This setup doesn't include celerybeat, instead use the heroku scheduler.  
+``` 
+web: newrelic-admin run-program python manage.py run_gunicorn -b "0.0.0.0:$PORT" -w 3
+# worker: newrelic-admin run-program python manage.py celeryd -E --loglevel=INFO
 ``` 
 
 
-Complex with newrelic, gunicorn, gevent, celery scheduler and worker
-https://github.com/rdegges/django-skel/
-``` 
-web: newrelic-admin run-program gunicorn -c gunicorn.py.ini wsgi:application
-scheduler: python manage.py celery worker -B -E --maxtasksperchild=1000
-worker: python manage.py celery worker -E --maxtasksperchild=1000
-``` 
 
-Complex with newrelic, gunicorn, gevent, and celery worker
+NB: The following Advanced setups use gevent to process requests asynchronously.  This can yield substantial performance improvements, but can also make debugging substantially more complicated.  They also include both a celery scheduler and worker -- there should never be more than one scheduler instance.  I have not used or confirmed that these settings work -- they are here for reference.
+
+Advanced, with newrelic, gunicorn, gevent, and celery worker
 from https://github.com/seanbrant/django-project-skeleton
 ``` 
 web: newrelic-admin run-program gunicorn [project_name].wsgi -w 4 -b 0.0.0.0:$PORT -k gevent --max-requests 250
-# worker: newrelic-admin run-program python manage.py celeryd -E -B --loglevel=INFO
+# scheduler: newrelic-admin run-program python manage.py celeryd -B -E --loglevel=INFO
+# worker: newrelic-admin run-program python manage.py celeryd -E --loglevel=INFO
 ``` 
+
+
+Advanced with newrelic, gunicorn, gevent, celery scheduler and worker
+https://github.com/rdegges/django-skel/
+``` 
+web: newrelic-admin run-program gunicorn -c gunicorn.py.ini wsgi:application
+# scheduler: python manage.py celery worker -B -E --maxtasksperchild=1000
+# worker: python manage.py celery worker -E --maxtasksperchild=1000
+``` 
+
+
 
 
 ## Working Locally
