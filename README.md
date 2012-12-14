@@ -166,7 +166,7 @@ foreman run python manage.py syncdb && foreman run python manage.py migrate
 
 Collect static
 ``` bash
-foreman run python manage.py collectstatic
+foreman run python manage.py collectstatic --noinput
 ```
 
 Run Tests

@@ -46,49 +46,51 @@
   
   
   <body>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a id="brand_logo" class="brand" href="/"><span class="logo1">A</span><span class="logo2">Django</span><span class="logo3">Site</span></a>
-        <div class="pull-right">
-            {% if user.is_authenticated %}
-              <div class="btn-group">
-                <button class="btn dropdown-toggle" data-toggle="dropdown">
-                  {{user}}
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu pull-right">
-                  <!--
-                  <li><a href="/accounts/profile/">My Profile</a></li>
-                  <li class="divider"></li>
-                -->
-                  <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
-                  <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
-                  <li class="divider"></li>
-                <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
-                </ul>
-              </div>
-              
+    {% block navbar %}
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <a id="brand_logo" class="brand" href="/"><span class="logo1">A</span><span class="logo2">Django</span><span class="logo3">Site</span></a>
+          <div class="pull-right">
+              {% if user.is_authenticated %}
+                <div class="btn-group">
+                  <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    {{user}}
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu pull-right">
+                    <!--
+                    <li><a href="/accounts/profile/">My Profile</a></li>
+                    <li class="divider"></li>
+                  -->
+                    <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
+                    <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
+                    <li class="divider"></li>
+                  <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+                  </ul>
+                </div>
+                
 
-            {% else %}
-              <a class="btn" type="button" href="{% url 'account_login' %}">Sign In</a>
-              <a class="btn" type="button" href="{% url 'account_signup' %}">Sign Up</a>
-            {% endif %}
-        </div>
-        {% comment %}
-        <!-- AddThis Button BEGIN -->
-        <div class="nav pull-right snm_addthis_nav addthis_toolbox addthis_default_style addthis_32x32_style">
-        <a class="addthis_button_compact snm_atb"></a>
-        <a class="addthis_button_preferred_3 snm_atb"></a>
-        <a class="addthis_button_preferred_2 snm_atb"></a>
-        <a class="addthis_button_preferred_1 snm_atb"></a>
-        </div>
-        <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=SET_ADDTHIS_KEY"></script>
-        <!-- AddThis Button END -->        
-        {% endcomment %}
+              {% else %}
+                <a class="btn" type="button" href="{% url 'account_login' %}">Sign In</a>
+                <a class="btn" type="button" href="{% url 'account_signup' %}">Sign Up</a>
+              {% endif %}
+          </div>
+          {% comment %}
+          <!-- AddThis Button BEGIN -->
+          <div class="nav pull-right snm_addthis_nav addthis_toolbox addthis_default_style addthis_32x32_style">
+          <a class="addthis_button_compact snm_atb"></a>
+          <a class="addthis_button_preferred_3 snm_atb"></a>
+          <a class="addthis_button_preferred_2 snm_atb"></a>
+          <a class="addthis_button_preferred_1 snm_atb"></a>
+          </div>
+          <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=SET_ADDTHIS_KEY"></script>
+          <!-- AddThis Button END -->        
+          {% endcomment %}
+          </div>
         </div>
       </div>
-    </div>
+    {% endblock navbar %}
     <div class="container">
       {% block canvas %}
       {% block content %}

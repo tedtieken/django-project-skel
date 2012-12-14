@@ -1,7 +1,7 @@
 #TODOS
 
 
-Should we really separate requirements?  If the packages aren't imported, they don't take up memory, thus the downside is 1) a few seconds of deploy time and 2) server space.  There is also a risk of mis-configuration silent failure in produciton -- leading to something being imported that shouldn't be. The downsides and risks seem minimal.
+Should we really separate requirements?  , thus the -- leading to something being imported that shouldn't be. The downsides and risks seem minimal.
 
 Add readme on cron/scheduler
 
