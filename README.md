@@ -22,7 +22,7 @@ This is a first version, while it has been tested and used it is not promised to
 #####Deployment best practices by default
 - Uses virtualenv and virtualenvwrapper.
 - Uses pip and `requirements.txt`.
-- Uses of git.
+- Uses git.
 - Uses environment variables for secrets.
 - Includes a .gitignore for the usual junk.
 
