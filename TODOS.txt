@@ -3,10 +3,26 @@
 
 Should we really separate requirements?  , thus the -- leading to something being imported that shouldn't be. The downsides and risks seem minimal.
 
+django-crispy-forms and 'crispy-forms' in default installed apps
+integrate messages
+
+Create crib-sheet project, add crib-sheet
+ - views
+ - urls
+
+favicon.ico
+robots.txt
+humans.txt
+
+contact, privacy, TOS
+
 Add readme on cron/scheduler
+/assets/img, /assets/css, /assets/js  -- should there be a misc/base/site folder for consistency sake?
 
 logging setup
 Logs - to s3?
+
+Delete fixtures, add readme on "use fixtures sparingly" in fixtures folder
 
 Upgrade to django 1.5
 
@@ -39,7 +55,7 @@ Continuous Integration
 http://www.deploydjango.com/django_project_structure/index.html#step-2-define-your-requirements
 
 
-tastypie?
+?tastypie
 django-extensions
 'django-annoying'
 'imagekit',
@@ -63,6 +79,7 @@ Coffin
 raven
 cssselect
 django-braces
+sorl-thumbnails
 
 
 

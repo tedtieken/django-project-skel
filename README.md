@@ -85,6 +85,27 @@ wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 heroku login
 ```
 
+###Creating utility aliases
+To achieve dev/prod parity, we end up creating some very annoyingly verbose commands like ```foreman run python manage.py [command]``` 
+
+Adding the following to your ```~/.bash_aliases``` file can save a lot of repetitive and verbose keystrokes.  
+``` bash
+alias drpm ='python manage.py'
+alias frpm='foreman run python manage.py'
+alias herokurpm='heroku run python manage.py'
+alias frpmr='foreman run python manage.py runserver 0.0.0.0:5000'
+alias drpmr = 'python manage.py runserver 0.0.0.0:5000'
+alias [project-name] = 'cd /[path]/[to]/[projectname]/ && source ~/ve/[project-name]/bin/activate'
+```
+
+I intentionally keep django as 'd', foreman as 'f', and heroku as 'heroku' to make sure running commands locally is easy and remotely is hard.  It's very easy to type 'hrpm' when you mean 'frpm.'  Requiring the extra layer of thought can stop you from accidentally deleting your production database.
+
+To add or edit aliases
+``` bash
+nano ~/.bash_aliases
+``` 
+
+
 # Installation #
 ## Preparing for a new project
 
@@ -100,6 +121,7 @@ There is some wait time while pip installs requirements and while running the fi
     1. AWS Management Console > S3 
     2. Create Bucket [project_name]-logging
     3. Create Bucket [project_name]-assets-production, logging to ibid, prefix s3
+
 
 
 ## Start the new project
@@ -126,6 +148,7 @@ Install base requirements.
 ``` bash
 pip install -r requirements.txt
 ```
+NOTE: the requirements.txt provided in this repo has no versions.  requirements.old.txt has the latest versions that have been used and tested together.  
 
 (Optional) Check for newer versions
 Note that this command isn't instant, it can take a few seconds to start showing output.  This is normal.
@@ -435,6 +458,7 @@ pip uninstall [package]
 ``` 
 
 
+
 ## Setting up databases
 ### Local Postgres DB
 For dev/prod parity it is recommended that postgres be used locally as well as remotely
@@ -515,7 +539,7 @@ heroku config:remove DJANGO_ENV
 
 # Testing
 http://www.tdd-django-tutorial.com
-
+http://pycon-2012-notes.readthedocs.org/en/latest/testing_and_django.html
 
 #Frontend
 ## Bootstrap
