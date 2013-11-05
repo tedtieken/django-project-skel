@@ -1,5 +1,8 @@
 #TODOS
 
+Look at how this differs from the two-scoops startproject
+
+Move to 'django-heroku-quickstart-template' repo, this isn't really a fork of django-project-skel anymore.
 
 Should we really separate requirements?  , thus the -- leading to something being imported that shouldn't be. The downsides and risks seem minimal.
 

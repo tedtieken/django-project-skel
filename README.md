@@ -1,4 +1,4 @@
-# Django 1.4 project template for fast Heroku deployment
+# Django 1.4 & 1.5 project template for fast Heroku deployment
 <!-- Uncomment this in your real project (and delete )
 # {{ project_name|title }} Django Project
 
@@ -8,7 +8,7 @@ From [Django 1.4 project template for fast heroku deployment](https://github.com
 
 ## About
 
-This is a template for starting Django 1.4 projects and rapidly deploying to heroku.  It is opinionated and configured for the things that I like and repetitively end up adding before deployment.  
+This is a template for starting Django 1.4 projects and rapidly deploying to heroku.  It is opinionated and configured for the things that I like and repetitively end up adding before deployment.  It works with 1.5 but has not been thoroughly tested with 1.5. 
 
 This is a first version, while it has been tested and used it is not promised to be complete or bug free.
 
