@@ -224,7 +224,14 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = "[{{ project_name }}]"
 
-
+#Set this
+# https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
+# Until 1.7 it is probably a good idea to set it like this
+# ALLOWED_HOSTS = [
+#    '.{{ project_name }}.com', # Allow domain and subdomains
+#    '.{{ project_name }}.com.', # Also allow FQDN and subdomains
+# ]
+ALLOWED_HOSTS = ["*"]
 
 #######################################
 #ENVIRONMENTS
@@ -302,6 +309,10 @@ if DJANGO_ENV == "PRODUCTION":
   MIDDLEWARE_CLASSES += (
     
   )
+  
+  #Warn of overly permissive default ALLOWED_HOSTS setting.
+  if ALLOWED_HOSTS == ["*"]:
+    raise ValueError("setttings.ALLOWED_HOSTS is set to '*', update this to an appropriate value.  This error will only show in DEV")
   
 ########## END PRODUCTION ENVIRONMENT SETTINGS
 
