@@ -1,4 +1,4 @@
-# Django 1.4 & 1.5 project template for fast Heroku deployment
+# Project has Moved
 
 This skelleton has moved to 
 
